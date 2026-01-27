@@ -1,5 +1,6 @@
 import Image from "next/image";
 import {POSTER_PREFIX} from '@/app/lib/definitions';
+import type {Poster} from '@/app/lib/definitions';
 
 export default function Poster({
     width = 300,
