@@ -44,3 +44,8 @@ export async function tmdbSearch(title: string): Promise<any[]> {
         .catch(err => console.error(err));
 }
 
+export const fakeFetch = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    console.log('await')
+    return;
+}

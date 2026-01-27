@@ -1,16 +1,16 @@
-// 'use client';
+'use client';
 
-import Search from '@/app/ui/search';
-import {tmdbAuthenticate, tmdbSearch, tmdbSearchMovie} from '@/app/lib/data';
-import PosterPlaceholder from '@/app/ui/Poster';
+import Search from '@/app/ui/Search';
+import {useSearchParams} from 'next/dist/client/components/navigation';
 import MoviePoster from '@/app/ui/MoviePoster';
+import {Suspense} from 'react';
 
-export default async function Home() {
-    // const test = await tmdbAuthenticate();
-    const movieTest = await tmdbSearchMovie('Fight Club');
-    console.log('movieTest:', movieTest);
-    // const movieTest2 = await tmdbSearchMovie('Podziemny Krąg');
-    // const multiSearch = await tmdbSearch('Star Wars');
+export default function Home() {
+    const searchParams = useSearchParams();
+    const params = new URLSearchParams(searchParams);
+    const query = params?.get('query') || '';
+    const currentPage = Number(params?.get('page')) || 1;
+
 
     return (
         <div className="flex min-h-screen items-center justify-center font-sans bg-slate-700">
@@ -19,10 +19,16 @@ export default async function Home() {
 
                 <Search />
 
+                {/*todo: moviePosters GRID component*/}
+                {/*
+                    https://nextjs.org/docs/app/getting-started/fetching-data
+                */}
                 <div
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
 
-                    <MoviePoster posterURL={movieTest.poster_path} />
+                    {/*<Suspense>*/}
+                        <MoviePoster posterURL={'/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg'} />
+                    {/*</Suspense>*/}
 
                 </div>
             </main>
