@@ -1,3 +1,5 @@
+import {BACKDROP_PREFIX, MovieData, POSTER_PREFIX} from '@/app/lib/definitions';
+
 const auth = `Bearer ${process.env.TMDB_AUTH_TOKEN}`;
 const fetchOptions = {
     method: 'GET',
@@ -28,24 +30,50 @@ export async function tmdbSearchMovie(title: string): Promise<any[]> {
     console.log(dataJson.results[0]);
 
     return dataJson.results[0];
-    // fetch(url, fetchOptions)
-    //     .then(res => res.json())
-    //     .then(json => console.log(json.results[0]))
-    //     .catch(err => console.error(err));
 }
 
 export async function tmdbSearch(title: string): Promise<any[]> {
+    console.log('title: ', title);
     const query = encodeURIComponent(title.toLowerCase());
+    console.log('query: ', query);
     const url = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=1`;
 
-    fetch(url, fetchOptions)
-        .then(res => res.json())
-        .then(json => console.log(json))
-        .catch(err => console.error(err));
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = res.json();
+        return data;
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return [];
+    }
 }
 
 export const fakeFetch = async () => {
     await new Promise((resolve) => setTimeout(resolve, 5000));
     console.log('await')
     return;
+}
+
+// todo: pobierać też title i wyświetlać w przypadku PosterUnavailable pod original_title
+export const parseMovieDataResponse = (res: Object): MovieData[] => {
+    const resArray = [];
+    res?.results.forEach((result) => {
+        if (!result.original_title) return;
+
+        resArray.push({
+            id: result.id,
+            media_type: result.media_type,
+            original_title: result.original_title,
+            backdrop_path: result.backdrop_path ? `${BACKDROP_PREFIX}${result.backdrop_path}` : null,
+            poster_path: result.poster_path ? `${POSTER_PREFIX}${result.poster_path}` : null,
+        });
+    });
+
+    console.log(resArray);
+    return resArray;
 }

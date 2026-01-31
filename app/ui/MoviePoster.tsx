@@ -5,38 +5,40 @@ import {Button, Skeleton} from '@heroui/react';
 import {useState} from 'react';
 import {FaCheckCircle} from 'react-icons/fa';
 import Poster from '@/app/ui/Poster';
-import {useDataLoaded} from '@/app/lib/useDataLoaded';
-import {fakeFetch} from '@/app/lib/data';
+import {MovieData} from '@/app/lib/definitions';
+import PosterUnavailable from '@/app/ui/PosterUnavailable';
 
 
-export default function MoviePoster({ posterURL }: { posterURL: string }) {
+export default function MoviePoster({movieData}: { movieData: MovieData }) {
     const [isChecked, setIsChecked] = useState<boolean>(false);
-
-    const {isLoaded, data} = useDataLoaded(async () => {
-        return fakeFetch();  // Twój 5s fetch!
-    })
+    console.log(movieData.poster_path);
 
     return (
-        <div className={"cardWrapper relative"}>
+        <div className={"cardWrapper relative w-full h-full"}>
 
-            <Skeleton className="rounded-lg" isLoaded={isLoaded}>
+            {/*<Skeleton className="rounded-lg">*/}
             <Card
                 isPressable
                 radius="lg"
                 onPress={() => setIsChecked(!isChecked)}
+                className={"w-full h-full"}
             >
                 <FaCheckCircle
                     size={20}
                     className={`
                         text-success absolute top-2 right-2 transition-all duration-300 ease-in-out
                         ${isChecked
-                            ? 'opacity-100 scale-100 translate-y-0 rotate-0'
-                            : 'opacity-0 scale-75 -translate-y-2 -rotate-12'
-                        }
+                        ? 'opacity-100 scale-100 translate-y-0 rotate-0'
+                        : 'opacity-0 scale-75 -translate-y-2 -rotate-12'
+                    }
                     `}
                 />
 
-                <Poster url={posterURL} />
+                {movieData.poster_path ?
+                    <Poster url={movieData.poster_path}/> :
+                    <PosterUnavailable title={movieData.original_title}/>
+                }
+
             </Card>
             {/* Kontener udaje CardFooter. Unikamy zagnieżdżania buttona w buttonie */}
             <div
@@ -65,7 +67,7 @@ export default function MoviePoster({ posterURL }: { posterURL: string }) {
                 </Button>
 
             </div>
-            </Skeleton>
+            {/*</Skeleton>*/}
         </div>
     )
 }
