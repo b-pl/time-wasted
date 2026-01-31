@@ -2,7 +2,7 @@ import Search from '@/app/ui/Search';
 import MoviePostersGrid from '@/app/ui/MoviePostersGrid';
 import {parseMovieDataResponse, tmdbSearch} from '@/app/lib/data';
 import {Suspense} from 'react';
-import { RiMovie2Fill } from "react-icons/ri";
+import Navigation from '@/app/ui/Navbar';
 
 
 export default async function Home(props: {
@@ -18,20 +18,18 @@ export default async function Home(props: {
     console.log(response);
 
     return (
-        <div className="flex min-h-screen items-center justify-center font-sans bg-slate-700">
+        <div className="flex flex-col min-h-screen items-center justify-center font-sans bg-slate-700">
+
+            <Navigation/>
+
             <main
                 className="flex min-h-screen w-7xl flex-col items-center py-32 px-16 bg-slate-700 sm:items-start">
 
-                <Search />
+                <Search/>
+                <Suspense>
+                    <MoviePostersGrid moviesData={parseMovieDataResponse(response)}/>
+                </Suspense>
 
-                {/*todo: moviePosters GRID component*/}
-                {/*
-                    https://nextjs.org/docs/app/getting-started/fetching-data
-                */}
-
-                    <Suspense>
-                        <MoviePostersGrid moviesData={parseMovieDataResponse(response)} />
-                    </Suspense>
             </main>
         </div>
     );

@@ -1,73 +1,83 @@
 'use client';
 
 import {Card} from '@heroui/card';
-import {Button, Skeleton} from '@heroui/react';
+import {Button} from '@heroui/react';
 import {useState} from 'react';
-import {FaCheckCircle} from 'react-icons/fa';
 import Poster from '@/app/ui/Poster';
 import {MovieData} from '@/app/lib/definitions';
 import PosterUnavailable from '@/app/ui/PosterUnavailable';
+import clsx from 'clsx';
 
 
 export default function MoviePoster({movieData}: { movieData: MovieData }) {
     const [isChecked, setIsChecked] = useState<boolean>(false);
-    console.log(movieData.poster_path);
+    const isMovie = movieData.media_type === 'movie';
 
     return (
         <div className={"cardWrapper relative w-full h-full"}>
 
-            {/*<Skeleton className="rounded-lg">*/}
+            {/* movie card */}
             <Card
-                isPressable
                 radius="lg"
                 onPress={() => setIsChecked(!isChecked)}
-                className={"w-full h-full"}
+                className={clsx(
+                    "w-full h-full hover:scale-110 border-2 border-transparent",
+                    isChecked && "border-success-400",
+                )}
             >
-                <FaCheckCircle
-                    size={20}
-                    className={`
-                        text-success absolute top-2 right-2 transition-all duration-300 ease-in-out
-                        ${isChecked
-                        ? 'opacity-100 scale-100 translate-y-0 rotate-0'
-                        : 'opacity-0 scale-75 -translate-y-2 -rotate-12'
-                    }
-                    `}
-                />
 
+                {/* movie title */}
+                <div
+                    className={"p-1 h-auto w-full items-center overflow-hidden color-inherit subpixel-antialiased " +
+                        "absolute flex flex-col gap-1 bg-black/25"}>
+                    <span className="px-2 bg-black text-gray-400 font-medium rounded-lg text-center">{movieData.title}</span>
+                    {
+                        movieData.original_title && (movieData.original_title !== movieData.title) &&
+                        <span className="px-2 bg-black text-gray-400 text-tiny text-center font-medium rounded-lg">
+                                ({movieData.original_title})
+                            </span>
+                    }
+
+                </div>
+
+                {/* movie poster */}
                 {movieData.poster_path ?
                     <Poster url={movieData.poster_path}/> :
-                    <PosterUnavailable title={movieData.original_title}/>
+                    <PosterUnavailable/>
                 }
 
+                {/* action buttons */}
+                <div
+                    className="p-3 h-auto w-full items-center overflow-hidden color-inherit subpixel-antialiased
+                 rounded-b-large absolute bottom-0.5 flex gap-2"
+                >
+                    {!isMovie &&
+                        <Button
+                            className="text-tiny text-white bg-black/60 flex-1 border-1 border-white/30"
+                            color="default"
+                            radius="lg"
+                            size="sm"
+                            variant="flat"
+                            onPress={() => setIsChecked(!isChecked)}
+                        >
+                            Add by season
+                        </Button>
+                    }
+
+                    <Button
+                        className="text-tiny text-white bg-black/60 flex-1 border-1 border-white/30"
+                        color="default"
+                        radius="lg"
+                        size="sm"
+                        variant="flat"
+                        onPress={() => setIsChecked(!isChecked)}
+
+                    >
+                        {isMovie ? "Add" : "Add all seasons"}
+                    </Button>
+                </div>
             </Card>
-            {/* Kontener udaje CardFooter. Unikamy zagnieżdżania buttona w buttonie */}
-            <div
-                className="p-3 h-auto w-full items-center overflow-hidden color-inherit subpixel-antialiased rounded-b-large absolute bottom-0.5 flex"
-            >
-                <Button
-                    className="text-tiny text-white bg-black/60 flex-1"
-                    color="default"
-                    radius="lg"
-                    size="sm"
-                    variant="flat"
-                    onPress={() => setIsChecked(!isChecked)}
-                >
-                    Add by season
-                </Button>
-                <Button
-                    className="text-tiny text-white bg-black/60 flex-1"
-                    color="default"
-                    radius="lg"
-                    size="sm"
-                    variant="flat"
-                    onPress={() => setIsChecked(!isChecked)}
 
-                >
-                    Add all seasons
-                </Button>
-
-            </div>
-            {/*</Skeleton>*/}
         </div>
     )
 }

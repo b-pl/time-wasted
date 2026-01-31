@@ -7,12 +7,6 @@ import {useDebouncedCallback} from 'use-debounce';
 import {useRef, useEffect, useState} from 'react';
 import {Kbd} from "@heroui/kbd";
 
-
-/**
- * Todo:
- * Dodać "chip" do searcha i keyboard skrót focusujący search
- */
-
 export default function Search() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -66,7 +60,8 @@ export default function Search() {
                 classNames={{
                     clearButton: "text-default-600 opacity-70",
                     input: "cursor-pointer",
-                    inputWrapper: "data-[hover=true]:!cursor-pointer",
+                    inputWrapper: "data-[hover=true]:!cursor-pointer border-2 border-primary/50 focus-within:border-primary",
+                    innerWrapper: "",
                 }}
                 startContent={<FaSearch className={"text-default-600"} />}
                 endContent={searchKbd}
