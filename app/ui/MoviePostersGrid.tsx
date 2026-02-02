@@ -1,18 +1,27 @@
 'use client';
 
-import {use} from 'react';
 import MoviePoster from '@/app/ui/MoviePoster';
 import {MovieData} from '@/app/lib/definitions';
+import PaginationArrows from '@/app/ui/PaginationArrows';
 
-export default function MoviePostersGrid({ moviesData }: { moviesData: MovieData[] }) {
+export default function MoviePostersGrid({moviesData, pagesCount}: {
+    moviesData: MovieData[];
+    pagesCount: number;
+}) {
     return (
-        <ul
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
+        <>
+            {moviesData.length > 0 && <PaginationArrows position="top" pagesCount={pagesCount} />}
 
-            {moviesData.map((movieData: MovieData) => (
-                <li key={`${movieData.media_type}_${movieData.id}`}><MoviePoster movieData={movieData} /></li>
-            ))}
+            <ul
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
 
-        </ul>
+                {moviesData.map((movieData: MovieData) => (
+                    <li key={`${movieData.media_type}_${movieData.id}`}><MoviePoster movieData={movieData}/></li>
+                ))}
+
+            </ul>
+
+            {moviesData.length > 0 && <PaginationArrows position="bottom" pagesCount={pagesCount} />}
+        </>
     )
 }

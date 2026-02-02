@@ -7,7 +7,14 @@ export interface Poster {
     url?: string;
 }
 
-// API returns title / name
+export interface MovieApiResponse {
+    page: number;
+    total_pages: number;
+    total_results: number;
+    results?: MovieData[];
+}
+
+// Parsed API response
 export interface MovieData {
     id: number;
     media_type: string;
@@ -17,4 +24,10 @@ export interface MovieData {
     original_name?: string;
     backdrop_path?: string;
     poster_path?: string;
+}
+
+type Position = 'top' | 'bottom';
+export interface PositionProps {
+    position: Position;
+    pagesCount: number;
 }

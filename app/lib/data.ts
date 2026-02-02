@@ -1,4 +1,4 @@
-import {BACKDROP_PREFIX, MovieData, POSTER_PREFIX} from '@/app/lib/definitions';
+import {BACKDROP_PREFIX, MovieApiResponse, MovieData, POSTER_PREFIX} from '@/app/lib/definitions';
 
 const auth = `Bearer ${process.env.TMDB_AUTH_TOKEN}`;
 const fetchOptions = {
@@ -21,11 +21,16 @@ const fetchOptions = {
 //         .catch(err => console.error(err));
 // }
 
-export async function tmdbSearch(title: string): Promise<any[]> {
-    console.log('title: ', title);
+export async function tmdbSearch(title: string, currentPage?: number): Promise<MovieApiResponse> {
     const query = encodeURIComponent(title.toLowerCase());
-    console.log('query: ', query);
-    const url = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=1`;
+    const page = encodeURIComponent(currentPage) || '1';
+    const url = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=${page}`;
+
+    console.group('tmdbSearch()');
+        console.log('title: ', title);
+        console.log('query: ', query);
+        console.log('page: ', page);
+    console.groupEnd('tmdbSearch()');
 
     try {
         const res = await fetch(url, fetchOptions);
@@ -52,8 +57,8 @@ export const parseMovieDataResponse = (res: Object): MovieData[] => {
             media_type: result.media_type,
             title: result.title || result.name,
             original_title: result.original_title || result.original_name,
-            backdrop_path: result.backdrop_path ? `${BACKDROP_PREFIX}${result.backdrop_path}` : null,
-            poster_path: result.poster_path ? `${POSTER_PREFIX}${result.poster_path}` : null,
+            backdrop_path: (result.backdrop_path && `${BACKDROP_PREFIX}${result.backdrop_path}`) || null,
+            poster_path: (result.poster_path && `${POSTER_PREFIX}${result.poster_path}`) || null,
         });
     });
 

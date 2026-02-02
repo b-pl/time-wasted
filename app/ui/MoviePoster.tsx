@@ -30,7 +30,8 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
                 <div
                     className={"p-1 h-auto w-full items-center overflow-hidden color-inherit subpixel-antialiased " +
                         "absolute flex flex-col gap-1 bg-black/25"}>
-                    <span className="px-2 bg-black text-gray-400 font-medium rounded-lg text-center">{movieData.title}</span>
+                        <span
+                            className="px-2 bg-black text-gray-400 font-medium rounded-lg text-center">{movieData.title}</span>
                     {
                         movieData.original_title && (movieData.original_title !== movieData.title) &&
                         <span className="px-2 bg-black text-gray-400 text-tiny text-center font-medium rounded-lg">
@@ -77,7 +78,6 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
                     </Button>
                 </div>
             </Card>
-
         </div>
     )
 }

@@ -42,6 +42,7 @@ export default function Search() {
 
     const handleSearch = useDebouncedCallback((term: string) => {
         const params = new URLSearchParams(searchParams);
+        params.set('page', '1');
 
         if (term) params.set('query', term);
         else params.delete('query');
@@ -61,7 +62,6 @@ export default function Search() {
                     clearButton: "text-default-600 opacity-70",
                     input: "cursor-pointer",
                     inputWrapper: "data-[hover=true]:!cursor-pointer border-2 border-primary/50 focus-within:border-primary",
-                    innerWrapper: "",
                 }}
                 startContent={<FaSearch className={"text-default-600"} />}
                 endContent={searchKbd}
