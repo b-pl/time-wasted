@@ -11,6 +11,8 @@ export default function Poster({
                                }: Poster) {
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
+    // todo
+    // change alt to movie name
     return (
         <Skeleton isLoaded={isImageLoaded}>
             <Image

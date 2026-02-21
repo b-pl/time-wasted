@@ -1,13 +1,16 @@
-'use client';
-
 import MoviePoster from '@/app/ui/MoviePoster';
-import {MovieData} from '@/app/lib/definitions';
+import {MovieApiResponse, MovieData} from '@/app/lib/definitions';
 import PaginationArrows from '@/app/ui/PaginationArrows';
+import {parseMovieDataResponse, tmdbSearch} from '@/app/lib/data';
 
-export default function MoviePostersGrid({moviesData, pagesCount}: {
-    moviesData: MovieData[];
-    pagesCount: number;
+export default async function MoviePostersGrid({query, currentPage}: {
+    currentPage: number;
+    query: string;
 }) {
+    const response: MovieApiResponse = await tmdbSearch(query, currentPage);
+    const moviesData = parseMovieDataResponse(response);
+    const pagesCount: number = response.total_pages;
+
     return (
         <>
             {moviesData.length > 0 && <PaginationArrows position="top" pagesCount={pagesCount} />}

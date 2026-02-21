@@ -7,11 +7,38 @@ import Poster from '@/app/ui/Poster';
 import {MovieData} from '@/app/lib/definitions';
 import PosterUnavailable from '@/app/ui/PosterUnavailable';
 import clsx from 'clsx';
+import {tmdbSeasonDetails, tmdbSeriesDetails, tmdbMovieDetails} from '@/app/lib/data';
+import {useWatchTime} from '@/app/contexts/WatchTimeContext';
 
 
 export default function MoviePoster({movieData}: { movieData: MovieData }) {
-    const [isChecked, setIsChecked] = useState<boolean>(false);
+    const { addWatchTime, subtractWatchTime } = useWatchTime();
     const isMovie = movieData.media_type === 'movie';
+    const [isChecked, setIsChecked] = useState<boolean>(false);
+    const [runtime, setRuntime] = useState<number | undefined>(undefined);
+
+    const getRuntime = async () => {
+        console.log('runtime: ', runtime);
+        if (runtime) return runtime;
+
+        const movieDetailsResponse = await tmdbMovieDetails(movieData.id);
+        console.log('movieDetailsResponse: ', movieDetailsResponse);
+        setRuntime(movieDetailsResponse.runtime);
+        return movieDetailsResponse.runtime;
+    }
+
+    const handleMovieClick = async () => {
+        const newIsChecked = !isChecked;
+        setIsChecked(newIsChecked);
+
+        const movieRuntime: number = await getRuntime();
+        console.log('movieRuntime: ', movieRuntime);
+        newIsChecked ? addWatchTime(movieRuntime) : subtractWatchTime(movieRuntime);
+    }
+
+    // console.group('MoviePoster movie data:');
+    //     console.dir(movieData);
+    // console.groupEnd('MoviePoster movie data:');
 
     return (
         <div className={"cardWrapper relative w-full h-full"}>
@@ -29,14 +56,16 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
                 {/* movie title */}
                 <div
                     className={"p-1 h-auto w-full items-center overflow-hidden color-inherit subpixel-antialiased " +
-                        "absolute flex flex-col gap-1 bg-black/25"}>
-                        <span
-                            className="px-2 bg-black text-gray-400 font-medium rounded-lg text-center">{movieData.title}</span>
+                        "absolute flex flex-col gap-1 bg-black/25 z-10"}
+                >
+                        <span className="px-2 bg-black text-gray-400 font-medium rounded-lg text-center">
+                            {movieData.title}
+                        </span>
                     {
                         movieData.original_title && (movieData.original_title !== movieData.title) &&
                         <span className="px-2 bg-black text-gray-400 text-tiny text-center font-medium rounded-lg">
                                 ({movieData.original_title})
-                            </span>
+                        </span>
                     }
 
                 </div>
@@ -71,7 +100,7 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
                         radius="lg"
                         size="sm"
                         variant="flat"
-                        onPress={() => setIsChecked(!isChecked)}
+                        onPress={handleMovieClick}
 
                     >
                         {isMovie ? "Add" : "Add all seasons"}

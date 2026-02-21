@@ -1,6 +1,6 @@
 import {BACKDROP_PREFIX, MovieApiResponse, MovieData, POSTER_PREFIX} from '@/app/lib/definitions';
 
-const auth = `Bearer ${process.env.TMDB_AUTH_TOKEN}`;
+const auth = `Bearer ${process.env.NEXT_PUBLIC_TMDB_AUTH_TOKEN}`;
 const fetchOptions = {
     method: 'GET',
     headers: {
@@ -12,25 +12,72 @@ const fetchOptions = {
     }
 }
 
-// export async function tmdbAuthenticate(): Promise<any[]> {
-//     const url = 'https://api.themoviedb.org/3/authentication';
-//
-//     fetch(url, fetchOptions)
-//         .then(res => res.json())
-//         .then(json => console.log(json))
-//         .catch(err => console.error(err));
-// }
+export async function tmdbMovieDetails(id: number): Promise<any> {
+    const url = `https://api.themoviedb.org/3/movie/${id}`;
+
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return error;
+    }
+}
+
+export async function tmdbSeriesDetails(id: number): Promise<any> {
+    const url = `https://api.themoviedb.org/3/tv/${id}`;
+
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return error;
+    }
+}
+
+export async function tmdbSeasonDetails(id: number, seasonNumber: number): Promise<any> {
+    const url = `https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}`;
+
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return error;
+    }
+}
+
+
+
+// export const getRuntime()
 
 export async function tmdbSearch(title: string, currentPage?: number): Promise<MovieApiResponse> {
     const query = encodeURIComponent(title.toLowerCase());
     const page = encodeURIComponent(currentPage) || '1';
     const url = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=${page}`;
 
-    console.group('tmdbSearch()');
-        console.log('title: ', title);
-        console.log('query: ', query);
-        console.log('page: ', page);
-    console.groupEnd('tmdbSearch()');
+    console.log('tmdbSearch executed')
+    // console.group('tmdbSearch()');
+    //     console.log('title: ', title);
+    //     console.log('query: ', query);
+    //     console.log('page: ', page);
+    // console.groupEnd('tmdbSearch()');
 
     try {
         const res = await fetch(url, fetchOptions);

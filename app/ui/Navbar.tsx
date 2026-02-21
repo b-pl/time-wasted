@@ -22,16 +22,20 @@ export default function Navigation() {
                     href="https://www.themoviedb.org/"
                     className={"h-full flex flex-col justify-center"}
                 >
-                    <div className={"relative h-10 w-full"}>
+                    <div className={"relative h-10 w-full min-w-[100px]"}>
                         <Image
                             src="tmdb-logo.svg"
                             alt="xD"
                             fill
-                            className={"object-contain"}
+                            className={"object-contain relative"}
                         />
                     </div>
-                    <span className={"text-tiny"}>Powered by</span>
                 </Link>
+                <span
+                    className={"text-tiny h-10 px-2 flex items-end"}
+                >
+                    This product uses the TMDB API but is not endorsed or certified by TMDB.
+                </span>
             </NavbarBrand>
         </Navbar>
     );
