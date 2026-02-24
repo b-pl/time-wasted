@@ -1,4 +1,6 @@
-const auth = `Bearer ${process.env.TMDB_AUTH_TOKEN}`;
+import {BACKDROP_PREFIX, MovieApiResponse, MovieData, POSTER_PREFIX} from '@/app/lib/definitions';
+
+const auth = `Bearer ${process.env.NEXT_PUBLIC_TMDB_AUTH_TOKEN}`;
 const fetchOptions = {
     method: 'GET',
     headers: {
@@ -10,32 +12,103 @@ const fetchOptions = {
     }
 }
 
-export async function tmdbAuthenticate(): Promise<any[]> {
-    const url = 'https://api.themoviedb.org/3/authentication';
+export async function tmdbMovieDetails(id: number): Promise<any> {
+    const url = `https://api.themoviedb.org/3/movie/${id}`;
 
-    fetch(url, fetchOptions)
-        .then(res => res.json())
-        .then(json => console.log(json))
-        .catch(err => console.error(err));
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return error;
+    }
 }
 
-export async function tmdbSearchMovie(title: string): Promise<any[]> {
+export async function tmdbSeriesDetails(id: number): Promise<any> {
+    const url = `https://api.themoviedb.org/3/tv/${id}`;
+
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return error;
+    }
+}
+
+export async function tmdbSeasonDetails(id: number, seasonNumber: number): Promise<any> {
+    const url = `https://api.themoviedb.org/3/tv/${id}/season/${seasonNumber}`;
+
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return error;
+    }
+}
+
+
+
+// export const getRuntime()
+
+export async function tmdbSearch(title: string, currentPage?: number): Promise<MovieApiResponse> {
     const query = encodeURIComponent(title.toLowerCase());
-    const url = `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`;
+    const page = encodeURIComponent(currentPage) || '1';
+    const url = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=${page}`;
 
-    fetch(url, fetchOptions)
-        .then(res => res.json())
-        .then(json => console.log(json.results[0]))
-        .catch(err => console.error(err));
+    console.log('tmdbSearch executed')
+    // console.group('tmdbSearch()');
+    //     console.log('title: ', title);
+    //     console.log('query: ', query);
+    //     console.log('page: ', page);
+    // console.groupEnd('tmdbSearch()');
+
+    try {
+        const res = await fetch(url, fetchOptions);
+
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return [];
+    }
 }
 
-export async function tmdbSearch(title: string): Promise<any[]> {
-    const query = encodeURIComponent(title.toLowerCase());
-    const url = `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=1`;
+export const parseMovieDataResponse = (res: Object): MovieData[] => {
+    const resArray: any = [];
+    res?.results.forEach((result: any) => {
+        if (!result.title && !result.name) return;
+        if (result.media_type !== 'tv' && result.media_type !== 'movie') return;
 
-    fetch(url, fetchOptions)
-        .then(res => res.json())
-        .then(json => console.log(json))
-        .catch(err => console.error(err));
+        resArray.push({
+            id: result.id,
+            media_type: result.media_type,
+            title: result.title || result.name,
+            original_title: result.original_title || result.original_name,
+            backdrop_path: (result.backdrop_path && `${BACKDROP_PREFIX}${result.backdrop_path}`) || null,
+            poster_path: (result.poster_path && `${POSTER_PREFIX}${result.poster_path}`) || null,
+        });
+    });
+
+    console.log('resArray: ', resArray);
+    return resArray;
 }
-

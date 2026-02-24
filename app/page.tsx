@@ -1,17 +1,30 @@
-import Search from '@/app/ui/search';
-import {tmdbAuthenticate, tmdbSearch, tmdbSearchMovie} from '@/app/lib/data';
+import Search from '@/app/ui/Search';
+import MoviePostersGrid from '@/app/ui/MoviePostersGrid';
+import Navigation from '@/app/ui/Navbar';
+import Counter from '@/app/ui/Counter';
 
-export default async function Home() {
-    // const test = await tmdbAuthenticate();
-    // const movieTest = await tmdbSearchMovie('Fight Club');
-    // const movieTest2 = await tmdbSearchMovie('Podziemny Krąg');
-    // const multiSearch = await tmdbSearch('Star Wars');
+export default async function Home(props: {
+    searchParams?: Promise<{
+        query?: string;
+        page?: string;
+    }>
+}) {
+    const searchParams = await props.searchParams;
+    const query: string = searchParams?.query || '';
+    const currentPage: number = Number(searchParams?.page) || 1;
 
-  return (
-    <div className="flex min-h-screen items-center justify-center  font-sans bg-slate-700">
-      <main className="flex min-h-screen w-full flex-col items-center justify-between py-32 px-16  bg-slate-700 sm:items-start">
-        <Search />
-      </main>
-    </div>
-  );
+    return (
+        <div className="flex flex-col min-h-screen items-center justify-center font-sans bg-slate-700">
+
+            <Navigation/>
+            <main
+                className="flex min-h-screen w-7xl flex-col items-center py-32 px-16 bg-slate-700 sm:items-start">
+
+                <Counter/>
+                <Search/>
+                <MoviePostersGrid currentPage={currentPage} query={query} />
+
+            </main>
+        </div>
+    );
 }
