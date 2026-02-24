@@ -36,13 +36,8 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
         newIsChecked ? addWatchTime(movieRuntime) : subtractWatchTime(movieRuntime);
     }
 
-    // console.group('MoviePoster movie data:');
-    //     console.dir(movieData);
-    // console.groupEnd('MoviePoster movie data:');
-
     return (
         <div className={"cardWrapper relative w-full h-full"}>
-
             {/* movie card */}
             <Card
                 radius="lg"

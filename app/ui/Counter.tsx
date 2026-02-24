@@ -20,7 +20,7 @@ export default function Counter() {
 
     const initCountUp = useCallback(async () => {
         if (timeRef.current && !isInitialized.current) {
-            timeAnimation.current = new CountUp(timeRef.current, 0);  // Start od 0
+            timeAnimation.current = new CountUp(timeRef.current, 0);
 
             if (!timeAnimation.current.error) {
                 timeAnimation.current.start();

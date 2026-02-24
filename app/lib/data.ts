@@ -109,6 +109,6 @@ export const parseMovieDataResponse = (res: Object): MovieData[] => {
         });
     });
 
-    console.log(resArray);
+    console.log('resArray: ', resArray);
     return resArray;
 }
