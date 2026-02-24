@@ -17,22 +17,42 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
     const [isChecked, setIsChecked] = useState<boolean>(false);
     const [runtime, setRuntime] = useState<number | undefined>(undefined);
 
-    const getRuntime = async () => {
-        console.log('runtime: ', runtime);
+    const getMovieRuntime = async () => {
         if (runtime) return runtime;
 
         const movieDetailsResponse = await tmdbMovieDetails(movieData.id);
-        console.log('movieDetailsResponse: ', movieDetailsResponse);
+        if (!movieDetailsResponse.runtime) {
+            return 0;
+        }
+
         setRuntime(movieDetailsResponse.runtime);
         return movieDetailsResponse.runtime;
+    }
+
+    const getSeriesRuntime = async () => {
+        if (runtime) return runtime;
+
+        const seriesDetailsResponse = await tmdbSeriesDetails(movieData.id);
+        const numberOfEpisodes: number = seriesDetailsResponse.number_of_episodes;
+
+        if (seriesDetailsResponse.episode_run_time.length) {
+            const wholeShowRuntime: number = numberOfEpisodes * seriesDetailsResponse.episode_run_time[0];
+            setRuntime(wholeShowRuntime);
+            return wholeShowRuntime;
+        }
+
+        // tmdbSeriesDetails nie zawsze zwraca runtime, wtedy sprawdzamy runtime dla S01E01
+        const seasonDetailsResponse = await tmdbSeasonDetails(movieData.id, 1);
+        const wholeShowRuntime: number = seasonDetailsResponse.episodes[0].runtime * numberOfEpisodes;
+        setRuntime(wholeShowRuntime);
+        return wholeShowRuntime;
     }
 
     const handleMovieClick = async () => {
         const newIsChecked = !isChecked;
         setIsChecked(newIsChecked);
 
-        const movieRuntime: number = await getRuntime();
-        console.log('movieRuntime: ', movieRuntime);
+        const movieRuntime: number = isMovie ? await getMovieRuntime() : await getSeriesRuntime();
         newIsChecked ? addWatchTime(movieRuntime) : subtractWatchTime(movieRuntime);
     }
 
@@ -76,18 +96,19 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
                     className="p-3 h-auto w-full items-center overflow-hidden color-inherit subpixel-antialiased
                  rounded-b-large absolute bottom-0.5 flex gap-2"
                 >
-                    {!isMovie &&
-                        <Button
-                            className="text-tiny text-white bg-black/60 flex-1 border-1 border-white/30"
-                            color="default"
-                            radius="lg"
-                            size="sm"
-                            variant="flat"
-                            onPress={() => setIsChecked(!isChecked)}
-                        >
-                            Add by season
-                        </Button>
-                    }
+                    {/*Todo - W późniejszym etapie zrobić sumowanie sezonów pojedynczo*/}
+                    {/*{!isMovie &&*/}
+                    {/*    <Button*/}
+                    {/*        className="text-tiny text-white bg-black/60 flex-1 border-1 border-white/30"*/}
+                    {/*        color="default"*/}
+                    {/*        radius="lg"*/}
+                    {/*        size="sm"*/}
+                    {/*        variant="flat"*/}
+                    {/*        onPress={() => setIsChecked(!isChecked)}*/}
+                    {/*    >*/}
+                    {/*        Add by season*/}
+                    {/*    </Button>*/}
+                    {/*}*/}
 
                     <Button
                         className="text-tiny text-white bg-black/60 flex-1 border-1 border-white/30"
@@ -98,7 +119,9 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
                         onPress={handleMovieClick}
 
                     >
-                        {isMovie ? "Add" : "Add all seasons"}
+                        {!isChecked ? "Add" : "Remove"}
+                        {/*Todo - W późniejszym etapie zrobić sumowanie sezonów pojedynczo, poniżej button content*/}
+                        {/*{isMovie ? "Add" : "Add all seasons"}*/}
                     </Button>
                 </div>
             </Card>
