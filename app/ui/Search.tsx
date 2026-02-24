@@ -8,9 +8,9 @@ import {useRef, useEffect, useState} from 'react';
 import {Kbd} from "@heroui/kbd";
 
 export default function Search() {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
-    const {replace} = useRouter();
     const inputRef = useRef(null);
     const [isFocused, setFocused] = useState(false);
     const isMac = navigator.platform.toUpperCase().includes('MAC');
@@ -47,7 +47,8 @@ export default function Search() {
         if (term) params.set('query', term);
         else params.delete('query');
 
-        replace(`${pathname}?${params.toString()}`);
+        const url = `${pathname}?${params.toString()}`;
+        router.push(url, {scroll: false});
     }, 300);
 
     return (
