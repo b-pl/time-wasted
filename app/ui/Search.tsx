@@ -12,7 +12,9 @@ export default function Search() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const inputRef = useRef(null);
+    const [value, setValue] = useState(searchParams.get('query') || '');
     const [isFocused, setFocused] = useState(false);
+
     const isMac = navigator.platform.toUpperCase().includes('MAC');
     const searchKbd = isFocused ?
         <Kbd>ESC</Kbd> :
@@ -24,21 +26,44 @@ export default function Search() {
             const searchShortcutPressed =
                 (isMac && event.metaKey && event.key.toLowerCase() === 'k') ||
                 (!isMac && event.ctrlKey && event.key.toLowerCase() === 'k');
-
             if (searchShortcutPressed) {
                 event.preventDefault();
                 if (inputRef.current) {
                     inputRef.current.focus();
+                    inputRef.current.select();
+                }
+            }
+
+            const blurSearchShortcutPressed = (event.key === 'Escape');
+            if (isFocused && blurSearchShortcutPressed) {
+                event.preventDefault();
+
+                // na pierwszy klik ESC czyścimy input value
+                if (inputRef.current.value !== '') {
+                    setValue('');
+
+                    const params = new URLSearchParams(searchParams);
+                    params.delete('query');
+                    const url = `${pathname}?${params.toString()}`;
+                    router.push(url, {scroll: false});
+
+                    return;
+                }
+
+                // na drugi klik blurujemy
+                if (inputRef.current) {
+                    inputRef.current.blur();
+                    setFocused(false);
+                    return;
                 }
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
-
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [isFocused]);
 
     const handleSearch = useDebouncedCallback((term: string) => {
         const params = new URLSearchParams(searchParams);
@@ -55,7 +80,8 @@ export default function Search() {
         <div className="flex w-full flex-wrap md:flex-nowrap gap-4 pb-16 relative">
             <Input
                 ref={inputRef}
-                isClearable
+                value={value}
+                onValueChange={setValue}
                 label="Search for TV Show or Movie..."
                 type="text"
                 className="light"
@@ -69,10 +95,10 @@ export default function Search() {
                 onChange={(e) => {
                     handleSearch(e.target.value);
                 }}
-                defaultValue={searchParams.get('query')?.toString()}
                 minLength={2}
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
+
             />
         </div>
     )

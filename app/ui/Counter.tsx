@@ -45,17 +45,11 @@ export default function Counter() {
         }
     }, [totalWatchTime]);
 
-    const handleClick = () => {
-        addWatchTime(100);
-    };
-
     return (
         <div
             className={`flex items-center justify-center w-full mb-12` +
                         ` flex-col`}
         >
-            <h1 onClick={handleClick} className={`mb-4`}>Add time</h1>
-            <h1 onClick={resetWatchTime} className={`mb-4`}>Reset</h1>
             <Card className={"w-full"}>
                 <CardBody
                     className={`flex flex-col items-center justify-center w-full gap-y-2`}

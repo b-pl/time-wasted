@@ -9,13 +9,15 @@ import PosterUnavailable from '@/app/ui/PosterUnavailable';
 import clsx from 'clsx';
 import {tmdbSeasonDetails, tmdbSeriesDetails, tmdbMovieDetails} from '@/app/lib/data';
 import {useWatchTime} from '@/app/contexts/WatchTimeContext';
+import Spinner from '@/app/ui/Spinner';
 
 
 export default function MoviePoster({movieData}: { movieData: MovieData }) {
-    const { addWatchTime, subtractWatchTime } = useWatchTime();
+    const {addWatchTime, subtractWatchTime} = useWatchTime();
     const isMovie = movieData.media_type === 'movie';
     const [isChecked, setIsChecked] = useState<boolean>(false);
     const [runtime, setRuntime] = useState<number | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const getMovieRuntime = async () => {
         if (runtime) return runtime;
@@ -52,7 +54,9 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
         const newIsChecked = !isChecked;
         setIsChecked(newIsChecked);
 
+        setIsLoading(true);
         const movieRuntime: number = isMovie ? await getMovieRuntime() : await getSeriesRuntime();
+        setIsLoading(false);
         newIsChecked ? addWatchTime(movieRuntime) : subtractWatchTime(movieRuntime);
     }
 
@@ -67,6 +71,11 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
                     isChecked && "border-success-400",
                 )}
             >
+                {isLoading &&
+                    <div className={"absolute inset-0 bg-black/50 flex items-center justify-center z-50"}>
+                        <Spinner size={"lg"}/>
+                    </div>
+                }
 
                 {/* movie title */}
                 <div
