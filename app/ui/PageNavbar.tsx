@@ -2,13 +2,13 @@ import {Navbar, NavbarBrand} from '@heroui/navbar';
 import Image from 'next/image';
 import {Link} from '@heroui/link';
 
-export default function Navigation() {
+export default function PageNavbar() {
     return (
         <Navbar
             classNames={{
                 wrapper: [
-                    "max-w-7xl h-16",
-                    "px-16"
+                    "max-w-full lg:max-w-7xl h-16",
+                    "px-8 lg:px-16"
                 ],
                 brand: [
                     "h-full"
@@ -16,7 +16,9 @@ export default function Navigation() {
             }}
             position={"static"}
         >
-            <NavbarBrand>
+            <NavbarBrand
+                className={`max-w-full whitespace-normal`}
+            >
                 <Link
                     isExternal
                     href="https://www.themoviedb.org/"
@@ -32,7 +34,11 @@ export default function Navigation() {
                     </div>
                 </Link>
                 <span
-                    className={"text-tiny h-10 px-2 flex items-end"}
+                    className={
+                        "text-tiny px-2 flex items-end " +
+                        "h-full flex-col justify-center " +
+                        "sm:h-10 sm:flex-row sm:justify-end "
+                    }
                 >
                     This product uses the TMDB API but is not endorsed or certified by TMDB.
                 </span>
@@ -40,3 +46,5 @@ export default function Navigation() {
         </Navbar>
     );
 }
+
+//{/*     h-full flex flex-col justify-center*/}

@@ -55,7 +55,7 @@ export default function Counter() {
                     className={`flex flex-col items-center justify-center w-full gap-y-2`}
                 >
                     <span className={"text-3xl"}>You've wasted</span>
-                    <span ref={timeRef} className={"text-9xl text-red-500"} suppressHydrationWarning>
+                    <span ref={timeRef} className={"text-5xl lg:text-9xl text-red-500"} suppressHydrationWarning>
                         {totalWatchTime}
                     </span>
                     <span className={"text-3xl"}>minutes watching tv</span>
