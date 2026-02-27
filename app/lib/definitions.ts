@@ -5,6 +5,7 @@ export interface Poster {
     width?: number;
     height?: number;
     url?: string;
+    title?: string;
 }
 
 export interface MovieApiResponse {

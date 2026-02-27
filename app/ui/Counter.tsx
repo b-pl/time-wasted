@@ -47,7 +47,7 @@ export default function Counter() {
 
     return (
         <div
-            className={`flex items-center justify-center w-full mb-12` +
+            className={`flex items-center justify-center w-full mb-6 lg:mb-12` +
                         ` flex-col`}
         >
             <Card className={"w-full"}>

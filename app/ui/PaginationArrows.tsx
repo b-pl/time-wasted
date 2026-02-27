@@ -25,7 +25,7 @@ export default function PaginationArrows({position, pagesCount}: PositionProps) 
         params.set('page', pageNumber.toString());
         const url = `${pathname}?${params.toString()}`;
 
-        router.push(url, {scroll: false});
+        router.push(url, {scroll: position === 'top' ? false : true});
     }
 
     return (

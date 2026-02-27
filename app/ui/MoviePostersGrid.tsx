@@ -14,7 +14,6 @@ export default async function MoviePostersGrid({query, currentPage}: {
 
     if (!query) return null;
 
-    // todo - wyszukaj DFD -> zła wielkość kafli
     return (
         <>
             {moviesData.length > 0 && <PaginationArrows position="top" pagesCount={pagesCount}/>}
@@ -22,7 +21,10 @@ export default async function MoviePostersGrid({query, currentPage}: {
             {
                 moviesData.length > 0
                     ? <ul
-                        className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch auto-rows-fr gap-8 max-w-7xl mx-auto">
+                        className={
+                            "grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 " +
+                            "items-stretch auto-rows-fr gap-4 lg:gap-8 max-w-7xl w-full"
+                        }>
                         {moviesData.map((movieData: MovieData) => (
                             <li key={`${movieData.media_type}_${movieData.id}`}>
                                 <MoviePoster movieData={movieData}/>

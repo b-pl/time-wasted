@@ -52,10 +52,10 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
 
     const handleMovieClick = async () => {
         const newIsChecked = !isChecked;
-        setIsChecked(newIsChecked);
 
         setIsLoading(true);
         const movieRuntime: number = isMovie ? await getMovieRuntime() : await getSeriesRuntime();
+        setIsChecked(newIsChecked);
         setIsLoading(false);
         newIsChecked ? addWatchTime(movieRuntime) : subtractWatchTime(movieRuntime);
     }
@@ -96,7 +96,7 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
 
                 {/* movie poster */}
                 {movieData.poster_path ?
-                    <Poster url={movieData.poster_path}/> :
+                    <Poster url={movieData.poster_path} title={movieData.title}/> :
                     <PosterUnavailable/>
                 }
 

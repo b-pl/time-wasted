@@ -17,12 +17,12 @@ export default function Search() {
 
     const isMac = navigator.platform.toUpperCase().includes('MAC');
     const searchKbd = isFocused ?
-        <Kbd>ESC</Kbd> :
-        <Kbd keys={isMac ? ["command"] : ["ctrl"]} className="light">K</Kbd>
+        <Kbd className={"hidden md:flex"}>ESC</Kbd> :
+        <Kbd keys={isMac ? ["command"] : ["ctrl"]} className={"light hidden md:flex"}>K</Kbd>
 
     useEffect(() => {
         const handleKeyDown = (event: any) => {
-            // CMD + K -> active search
+            // CMD + K -> activate search
             const searchShortcutPressed =
                 (isMac && event.metaKey && event.key.toLowerCase() === 'k') ||
                 (!isMac && event.ctrlKey && event.key.toLowerCase() === 'k');
@@ -34,27 +34,24 @@ export default function Search() {
                 }
             }
 
-            const blurSearchShortcutPressed = (event.key === 'Escape');
-            if (isFocused && blurSearchShortcutPressed) {
+            // Escape -> deactivate search
+            if (isFocused && event.key === 'Escape') {
                 event.preventDefault();
 
-                // na pierwszy klik ESC czyścimy input value
-                if (inputRef.current.value !== '') {
-                    setValue('');
-
-                    const params = new URLSearchParams(searchParams);
-                    params.delete('query');
-                    const url = `${pathname}?${params.toString()}`;
-                    router.push(url, {scroll: false});
-
-                    return;
-                }
-
-                // na drugi klik blurujemy
                 if (inputRef.current) {
                     inputRef.current.blur();
                     setFocused(false);
-                    return;
+                }
+            }
+
+            // Enter -> MOBILE ONLY - deactivate keyboard (input blur)
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                if (window.innerWidth >= 768) return false;
+
+                if (inputRef.current) {
+                    inputRef.current.blur();
+                    setFocused(false);
                 }
             }
         };
@@ -77,7 +74,7 @@ export default function Search() {
     }, 300);
 
     return (
-        <div className="flex w-full flex-wrap md:flex-nowrap gap-4 pb-16 relative">
+        <div className="flex w-full flex-wrap md:flex-nowrap gap-4 pb-6 lg:pb-16 relative">
             <Input
                 ref={inputRef}
                 value={value}
