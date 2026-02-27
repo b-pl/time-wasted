@@ -13,7 +13,7 @@ interface CountUpInstance {
 }
 
 export default function Counter() {
-    const { totalWatchTime, addWatchTime, resetWatchTime } = useWatchTime();
+    const { totalWatchTime } = useWatchTime();
     const timeRef = useRef<HTMLHeadingElement>(null);
     const timeAnimation = useRef<CountUpInstance | null>(null);
     const isInitialized = useRef(false);

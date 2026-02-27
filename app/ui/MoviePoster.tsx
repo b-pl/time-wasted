@@ -2,7 +2,7 @@
 
 import {Card} from '@heroui/card';
 import {Button} from '@heroui/react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Poster from '@/app/ui/Poster';
 import {MovieData} from '@/app/lib/definitions';
 import PosterUnavailable from '@/app/ui/PosterUnavailable';
@@ -19,7 +19,7 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
     const [runtime, setRuntime] = useState<number | undefined>(undefined);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const getMovieRuntime = async () => {
+    const getMovieRuntime = async ():Promise<number> => {
         if (runtime) return runtime;
 
         const movieDetailsResponse = await tmdbMovieDetails(movieData.id);
@@ -31,7 +31,7 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
         return movieDetailsResponse.runtime;
     }
 
-    const getSeriesRuntime = async () => {
+    const getSeriesRuntime = async ():Promise<number> => {
         if (runtime) return runtime;
 
         const seriesDetailsResponse = await tmdbSeriesDetails(movieData.id);
@@ -50,15 +50,50 @@ export default function MoviePoster({movieData}: { movieData: MovieData }) {
         return wholeShowRuntime;
     }
 
-    const handleMovieClick = async () => {
+    const updateLocalStorageData = (movieRuntime: number, remove: boolean):void => {
+        const storageData:object =
+            JSON.parse(localStorage.getItem('watchedMoviesData') || 'null') ||
+            {movies: {}, series: {}};
+        const type: 'movies' | 'series' = isMovie ? 'movies' : 'series';
+
+        if (storageData[type][movieData.id]) {
+            if (remove) delete storageData[type][movieData.id];
+        } else {
+            storageData[type][movieData.id] = {
+                title: movieData.title,
+                runtime: movieRuntime,
+            }
+        }
+
+        localStorage.setItem('watchedMoviesData', JSON.stringify(storageData));
+        return;
+    }
+
+    const checkWatchedOnLoad = () => {
+        const storageData: object | null =
+            JSON.parse(localStorage.getItem('watchedMoviesData') || 'null') ||
+            null;
+        const type: 'movies' | 'series' = isMovie ? 'movies' : 'series';
+
+        if (storageData[type][movieData.id]) {
+            setIsChecked((true));
+        }
+    }
+
+    const handleMovieClick = async ():Promise<void> => {
         const newIsChecked = !isChecked;
 
         setIsLoading(true);
         const movieRuntime: number = isMovie ? await getMovieRuntime() : await getSeriesRuntime();
         setIsChecked(newIsChecked);
+        updateLocalStorageData(movieRuntime, isChecked);
         setIsLoading(false);
         newIsChecked ? addWatchTime(movieRuntime) : subtractWatchTime(movieRuntime);
     }
+
+    useEffect(() => {
+        checkWatchedOnLoad();
+    }, []);
 
     return (
         <div className={"cardWrapper relative w-full h-full"}>
